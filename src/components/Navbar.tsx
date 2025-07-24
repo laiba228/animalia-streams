@@ -1,11 +1,25 @@
 import { useState } from 'react';
 import { Search, Menu, User, Bell, Video, Compass, Zap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
 export const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 glass backdrop-blur-xl border-b border-glass-border/30">
@@ -18,7 +32,7 @@ export const Navbar = () => {
               <Menu className="w-5 h-5" />
             </Button>
             
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow-primary">
                 <Zap className="w-6 h-6 text-primary-foreground" />
               </div>
@@ -28,7 +42,7 @@ export const Navbar = () => {
                 </h1>
                 <p className="text-xs text-muted-foreground -mt-1">Streams</p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Search Bar */}
@@ -44,10 +58,12 @@ export const Navbar = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
+                  onKeyPress={handleKeyPress}
                   className="pl-12 pr-12 h-12 glass border-glass-border/50 focus:border-primary/50 focus:shadow-glow-primary transition-all duration-300"
                 />
                 <Button 
                   size="icon"
+                  onClick={handleSearch}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-gradient-primary hover:shadow-glow-primary"
                 >
                   <Search className="w-4 h-4" />

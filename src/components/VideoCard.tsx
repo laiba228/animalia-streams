@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Play, Clock, Eye, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface VideoCardProps {
   id: string;
@@ -14,6 +15,7 @@ interface VideoCardProps {
 }
 
 export const VideoCard = ({ 
+  id,
   title, 
   thumbnail, 
   duration, 
@@ -26,11 +28,12 @@ export const VideoCard = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div 
-      className="group relative overflow-hidden rounded-xl glass transition-all duration-500 hover:scale-105 hover:shadow-glow-primary cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <Link to={`/watch/${id}`}>
+      <div 
+        className="group relative overflow-hidden rounded-xl glass transition-all duration-500 hover:scale-105 hover:shadow-glow-primary cursor-pointer"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       {/* Thumbnail Container */}
       <div className="relative aspect-video overflow-hidden">
         <img 
@@ -73,9 +76,9 @@ export const VideoCard = ({
               <img src={channelAvatar} alt={channel} className="w-full h-full object-cover" />
             </div>
           )}
-          <span className="text-sm text-muted-foreground hover:text-primary transition-colors">
+          <Link to={`/channel/${channel}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
             {channel}
-          </span>
+          </Link>
         </div>
 
         {/* Stats */}
@@ -98,6 +101,7 @@ export const VideoCard = ({
         background: 'linear-gradient(45deg, transparent, hsl(var(--primary) / 0.1), transparent)',
         animation: isHovered ? 'shimmer 2s infinite' : 'none'
       }} />
-    </div>
+      </div>
+    </Link>
   );
 };
