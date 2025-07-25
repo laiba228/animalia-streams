@@ -1,60 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Filter, SlidersHorizontal, Clock, TrendingUp, Calendar } from 'lucide-react';
+import { Filter, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { VideoCard } from '@/components/VideoCard';
 import { Navbar } from '@/components/Navbar';
-import birdsImage from '../assets/birds-tropical.jpg';
-import oceanImage from '../assets/ocean-dolphins.jpg';
-import leopardImage from '../assets/snow-leopard.jpg';
-
-const mockSearchResults = [
-  {
-    id: '1',
-    title: 'Tropical Birds of the Amazon Rainforest',
-    thumbnail: birdsImage,
-    duration: '42:15',
-    views: '2.3M',
-    likes: '98K',
-    channel: 'Wildlife Explorer',
-    channelAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-    category: 'Birds',
-    description: 'Explore the vibrant world of tropical birds in the Amazon rainforest...',
-    uploadDate: '2 days ago'
-  },
-  {
-    id: '2',
-    title: 'Ocean Giants: The Secret Life of Dolphins',
-    thumbnail: oceanImage,
-    duration: '38:22',
-    views: '1.8M',
-    likes: '76K',
-    channel: 'Deep Blue Films',
-    channelAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-    category: 'Marine',
-    description: 'Dive deep into the fascinating world of dolphins and discover their intelligence...',
-    uploadDate: '1 week ago'
-  },
-  {
-    id: '3',
-    title: 'Snow Leopards: Ghosts of the Mountains',
-    thumbnail: leopardImage,
-    duration: '35:48',
-    views: '1.2M',
-    likes: '65K',
-    channel: 'Mountain Wildlife',
-    channelAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b2e59d1b?w=40&h=40&fit=crop&crop=face',
-    category: 'Big Cats',
-    description: 'Follow the elusive snow leopards through the harsh mountain terrain...',
-    uploadDate: '3 days ago'
-  }
-];
+import { searchVideos } from '@/data/videos';
 
 const categories = [
-  'All', 'Birds', 'Marine', 'Big Cats', 'Primates', 'Reptiles', 'Insects', 
-  'Arctic Animals', 'Desert Life', 'Rainforest', 'Savanna', 'Documentaries'
+  'All', 'Birds', 'Marine Mammals', 'Big Cats', 'Primates', 'Deep Sea', 'Birds of Prey', 'Safari'
 ];
 
 const sortOptions = [
@@ -78,27 +33,18 @@ const Search = () => {
   const [sortBy, setSortBy] = useState('relevance');
   const [duration, setDuration] = useState('any');
   const [showFilters, setShowFilters] = useState(false);
-  const [results, setResults] = useState(mockSearchResults);
+  const [results, setResults] = useState([]);
 
   const searchQuery = searchParams.get('q') || '';
 
   useEffect(() => {
-    // Simulate search filtering based on query and filters
-    let filteredResults = mockSearchResults;
-
-    if (searchQuery) {
-      filteredResults = mockSearchResults.filter(video => 
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (selectedCategory !== 'All') {
-      filteredResults = filteredResults.filter(video => 
-        video.category === selectedCategory
-      );
-    }
+    // Get search results
+    const searchResults = searchVideos(searchQuery);
+    
+    // Filter by category if not 'All'
+    const filteredResults = selectedCategory === 'All' 
+      ? searchResults 
+      : searchResults.filter(video => video.category === selectedCategory);
 
     // Apply sorting
     switch (sortBy) {
@@ -106,7 +52,7 @@ const Search = () => {
         filteredResults.sort((a, b) => parseFloat(b.views) - parseFloat(a.views));
         break;
       case 'date':
-        // Mock sorting by date
+        // Sort by upload date (newer first)
         break;
       case 'rating':
         filteredResults.sort((a, b) => parseFloat(b.likes) - parseFloat(a.likes));
@@ -270,7 +216,18 @@ const Search = () => {
                   }}
                 >
                   <Link to={`/watch/${video.id}`}>
-                    <VideoCard {...video} />
+                    <VideoCard 
+                      key={video.id}
+                      id={video.id}
+                      title={video.title}
+                      thumbnail={video.thumbnail}
+                      duration={video.duration}
+                      views={video.views}
+                      likes={video.likes}
+                      channel={video.channelName}
+                      channelAvatar={video.channelAvatar}
+                      category={video.category}
+                    />
                   </Link>
                 </div>
               ))}

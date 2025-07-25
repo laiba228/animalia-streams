@@ -62,17 +62,16 @@ export const HeroSection = () => {
             <div className="space-y-6">
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-foreground via-primary-glow to-accent bg-clip-text text-transparent">
-                  Discover the
+                  Welcome to
                 </span>
                 <br />
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Animal Kingdom
+                  Animalia Streams
                 </span>
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
-                Immerse yourself in breathtaking wildlife documentaries, discover exotic species, 
-                and explore Earth's most incredible ecosystems—all in stunning detail.
+                Explore the incredible world of Kingdom Animalia through stunning documentaries and wildlife encounters from every corner of our planet.
               </p>
             </div>
 

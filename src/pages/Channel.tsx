@@ -5,79 +5,49 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VideoCard } from '@/components/VideoCard';
 import { Navbar } from '@/components/Navbar';
-import birdsImage from '../assets/birds-tropical.jpg';
-import oceanImage from '../assets/ocean-dolphins.jpg';
-import leopardImage from '../assets/snow-leopard.jpg';
+import { getChannelById } from '@/data/channels';
+import { getVideosByChannel } from '@/data/videos';
 
-const channelVideos = [
-  {
-    id: '1',
-    title: 'Tropical Birds of the Amazon Rainforest',
-    thumbnail: birdsImage,
-    duration: '42:15',
-    views: '2.3M',
-    likes: '98K',
-    channel: 'Wildlife Explorer',
-    category: 'Birds'
-  },
-  {
-    id: '2',
-    title: 'Ocean Giants: The Secret Life of Dolphins',
-    thumbnail: oceanImage,
-    duration: '38:22',
-    views: '1.8M',
-    likes: '76K',
-    channel: 'Wildlife Explorer',
-    category: 'Marine'
-  },
-  {
-    id: '3',
-    title: 'Snow Leopards: Ghosts of the Mountains',
-    thumbnail: leopardImage,
-    duration: '35:48',
-    views: '1.2M',
-    likes: '65K',
-    channel: 'Wildlife Explorer',
-    category: 'Big Cats'
-  }
-];
-
+// Mock playlists data
 const playlists = [
   {
     id: '1',
-    title: 'Big Cats Collection',
-    videoCount: 12,
-    thumbnail: leopardImage,
-    views: '5.2M total views'
+    title: 'Best of Wildlife',
+    videoCount: 24,
+    thumbnail: 'https://images.unsplash.com/photo-1558618666-fbd6c327cd4a?w=300&h=200&fit=crop',
+    views: '1.2M'
   },
   {
     id: '2',
-    title: 'Ocean Wildlife',
-    videoCount: 8,
-    thumbnail: oceanImage,
-    views: '3.1M total views'
+    title: 'Rare Animal Encounters',
+    videoCount: 18,
+    thumbnail: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=200&fit=crop',
+    views: '890K'
   }
 ];
+
 
 const Channel = () => {
   const { id } = useParams();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Mock channel data based on ID
-  const channelData = {
-    id: id || 'wildlife-explorer',
-    name: 'Wildlife Explorer',
-    handle: '@wildlifeexplorer',
+  // Get channel data and videos
+  const channelData = getChannelById(id) || {
+    id: id || 'wildlife-diaries',
+    name: 'Wildlife Diaries',
+    handle: '@wildlifediaries',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face',
-    banner: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=300&fit=crop',
-    subscribers: '2.1M',
-    videos: '156',
-    description: 'Bringing you the most incredible wildlife documentaries from around the globe. Join us as we explore the natural world and discover the fascinating behaviors of animals in their natural habitats.',
+    banner: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=1200&h=300&fit=crop',
+    subscribers: '4.1M',
+    videos: '180',
+    description: 'Your daily dose of wildlife adventures from around the globe. From African savannas to Arctic tundra, we bring you closer to nature.',
     location: 'Global',
-    joined: 'Joined Sep 2018',
-    totalViews: '342M'
+    joined: 'Joined Nov 2017',
+    totalViews: '78M'
   };
+
+  const channelVideos = getVideosByChannel(channelData.id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,7 +95,7 @@ const Channel = () => {
                   {channelData.name}
                 </h1>
                 <p className="text-muted-foreground">
-                  {channelData.handle} • {channelData.subscribers} subscribers • {channelData.videos} videos
+                  {channelData.handle || '@' + channelData.id} • {channelData.subscribers} subscribers • {channelVideos.length} videos
                 </p>
               </div>
 
@@ -214,9 +184,20 @@ const Channel = () => {
                       animationFillMode: 'both'
                     }}
                   >
-                    <Link to={`/watch/${video.id}`}>
-                      <VideoCard {...video} />
-                    </Link>
+                  <Link to={`/watch/${video.id}`}>
+                    <VideoCard 
+                      key={video.id}
+                      id={video.id}
+                      title={video.title}
+                      thumbnail={video.thumbnail}
+                      duration={video.duration}
+                      views={video.views}
+                      likes={video.likes}
+                      channel={video.channelName}
+                      channelAvatar={video.channelAvatar}
+                      category={video.category}
+                    />
+                  </Link>
                   </div>
                 ))}
               </div>

@@ -6,9 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar } from '@/components/ui/avatar';
 import { VideoCard } from '@/components/VideoCard';
 import { Navbar } from '@/components/Navbar';
+import { getVideoById, getRelatedVideos } from '@/data/videos';
+import { getChannelById } from '@/data/channels';
 import birdsImage from '../assets/birds-tropical.jpg';
-import oceanImage from '../assets/ocean-dolphins.jpg';
-import leopardImage from '../assets/snow-leopard.jpg';
 
 const mockComments = [
   {
@@ -29,28 +29,6 @@ const mockComments = [
   }
 ];
 
-const relatedVideos = [
-  {
-    id: '2',
-    title: 'Ocean Giants: The Secret Life of Dolphins',
-    thumbnail: oceanImage,
-    duration: '38:22',
-    views: '1.8M',
-    likes: '76K',
-    channel: 'Deep Blue Films',
-    category: 'Marine'
-  },
-  {
-    id: '3',
-    title: 'Snow Leopards: Ghosts of the Mountains',
-    thumbnail: leopardImage,
-    duration: '35:48',
-    views: '1.2M',
-    likes: '65K',
-    channel: 'Mountain Wildlife',
-    category: 'Big Cats'
-  }
-];
 
 const VideoPlayer = () => {
   const { id } = useParams();
@@ -59,18 +37,21 @@ const VideoPlayer = () => {
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState(mockComments);
 
-  // Mock video data based on ID
-  const videoData = {
-    id: id || '1',
-    title: 'Tropical Birds of the Amazon Rainforest',
-    description: 'Explore the vibrant world of tropical birds in the Amazon rainforest. From colorful macaws to melodic songbirds, discover the incredible diversity of avian life in one of Earth\'s most biodiverse ecosystems.',
+  // Get video data and related videos
+  const videoData = getVideoById(id) || {
+    id: id || 'jungle-parrots',
+    title: 'Tropical Parrots of the Amazon Rainforest',
+    description: 'Explore the vibrant world of tropical parrots in the Amazon rainforest. From colorful macaws to melodic songbirds, discover the incredible diversity of avian life in one of Earth\'s most biodiverse ecosystems.',
     views: '2.3M',
     likes: '98K',
     uploadDate: '2 days ago',
-    channel: 'Wildlife Explorer',
-    channelAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-    subscribers: '2.1M'
+    channelId: 'jungle-life',
+    channelName: 'Jungle Life',
+    channelAvatar: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=40&h=40&fit=crop&crop=face'
   };
+
+  const channelData = getChannelById(videoData.channelId);
+  const relatedVideos = getRelatedVideos(videoData.id, videoData.channelId);
 
   const handleAddComment = () => {
     if (newComment.trim()) {
@@ -108,7 +89,7 @@ const VideoPlayer = () => {
             {/* Video Player */}
             <div className="relative aspect-video bg-black rounded-xl overflow-hidden glass border border-glass-border/30">
               <img 
-                src={birdsImage} 
+                src={videoData.thumbnail || birdsImage} 
                 alt={videoData.title}
                 className="w-full h-full object-cover"
               />
@@ -168,12 +149,12 @@ const VideoPlayer = () => {
                     <img src={videoData.channelAvatar} alt={videoData.channel} />
                   </Avatar>
                   <div>
-                    <Link to={`/channel/${videoData.channel}`}>
-                      <h3 className="font-semibold text-foreground hover:text-primary transition-colors">
-                        {videoData.channel}
-                      </h3>
-                    </Link>
-                    <p className="text-sm text-muted-foreground">{videoData.subscribers} subscribers</p>
+                  <Link to={`/channel/${videoData.channelId}`}>
+                    <h3 className="font-semibold text-foreground hover:text-primary transition-colors">
+                      {videoData.channelName}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-muted-foreground">{channelData?.subscribers || '2.1M'} subscribers</p>
                   </div>
                 </div>
                 
@@ -260,7 +241,17 @@ const VideoPlayer = () => {
             <div className="space-y-4">
               {relatedVideos.map((video) => (
                 <Link key={video.id} to={`/watch/${video.id}`}>
-                  <VideoCard {...video} />
+                  <VideoCard 
+                    id={video.id}
+                    title={video.title}
+                    thumbnail={video.thumbnail}
+                    duration={video.duration}
+                    views={video.views}
+                    likes={video.likes}
+                    channel={video.channelName}
+                    channelAvatar={video.channelAvatar}
+                    category={video.category}
+                  />
                 </Link>
               ))}
             </div>
