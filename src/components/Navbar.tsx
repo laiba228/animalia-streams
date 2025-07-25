@@ -3,11 +3,15 @@ import { Search, Menu, User, Bell, Video, Compass, Zap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useTheme } from 'next-themes';
+import { motion } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 export const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -105,6 +109,7 @@ export const Navbar = () => {
             <Button variant="ghost" size="icon" className="ml-2 hover:bg-primary/10">
               <User className="w-5 h-5" />
             </Button>
+            <ThemeToggle />
           </div>
         </div>
       </div>

@@ -18,3 +18,8 @@
     "hooks": "@/hooks"
   }
 }
+/* In your CSS file */
+.neon-button {
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+  color: #ff00ff;
+}

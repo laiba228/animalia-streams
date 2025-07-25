@@ -9,6 +9,9 @@ import { Navbar } from '@/components/Navbar';
 import { getVideoById, getRelatedVideos } from '@/data/videos';
 import { getChannelById } from '@/data/channels';
 import birdsImage from '../assets/birds-tropical.jpg';
+import LikeButton from '../components/LikeButton';
+import SubscribeButton from '../components/SubscribeButton';
+import ChannelCard from '../components/ChannelCard';
 
 const mockComments = [
   {
@@ -114,14 +117,7 @@ const VideoPlayer = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant={isLiked ? "default" : "outline"}
-                    onClick={() => setIsLiked(!isLiked)}
-                    className="flex items-center gap-2"
-                  >
-                    <ThumbsUp className="w-4 h-4" />
-                    {videoData.likes}
-                  </Button>
+                  <LikeButton />
                   
                   <Button variant="outline">
                     <ThumbsDown className="w-4 h-4" />
@@ -143,28 +139,11 @@ const VideoPlayer = () => {
               </div>
 
               {/* Channel Info */}
-              <div className="flex items-center justify-between p-4 glass rounded-xl border border-glass-border/30">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12">
-                    <img src={videoData.channelAvatar} alt={videoData.channel} />
-                  </Avatar>
-                  <div>
-                  <Link to={`/channel/${videoData.channelId}`}>
-                    <h3 className="font-semibold text-foreground hover:text-primary transition-colors">
-                      {videoData.channelName}
-                    </h3>
-                  </Link>
-                  <p className="text-sm text-muted-foreground">{channelData?.subscribers || '2.1M'} subscribers</p>
-                  </div>
-                </div>
-                
-                <Button 
-                  variant={isSubscribed ? "outline" : "default"}
-                  onClick={() => setIsSubscribed(!isSubscribed)}
-                  className={isSubscribed ? "bg-muted" : "bg-gradient-primary"}
-                >
-                  {isSubscribed ? "Subscribed" : "Subscribe"}
-                </Button>
+              <div className="flex flex-wrap gap-4 items-center mt-4">
+                <SubscribeButton />
+                <Link to={`/channel/${videoData.channelId}`} className="ml-2">
+                  <ChannelCard channel={channelData} />
+                </Link>
               </div>
 
               {/* Description */}
@@ -238,21 +217,9 @@ const VideoPlayer = () => {
           {/* Related Videos Sidebar */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-foreground">Related Videos</h2>
-            <div className="space-y-4">
-              {relatedVideos.map((video) => (
-                <Link key={video.id} to={`/watch/${video.id}`}>
-                  <VideoCard 
-                    id={video.id}
-                    title={video.title}
-                    thumbnail={video.thumbnail}
-                    duration={video.duration}
-                    views={video.views}
-                    likes={video.likes}
-                    channel={video.channelName}
-                    channelAvatar={video.channelAvatar}
-                    category={video.category}
-                  />
-                </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+              {relatedVideos.map(video => (
+                <VideoCard key={video.id} {...video} />
               ))}
             </div>
           </div>

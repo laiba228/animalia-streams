@@ -205,31 +205,9 @@ const Search = () => {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {results.map((video, index) => (
-                <div
-                  key={video.id}
-                  className="animate-fade-in"
-                  style={{ 
-                    animationDelay: `${index * 0.1}s`,
-                    animationFillMode: 'both'
-                  }}
-                >
-                  <Link to={`/watch/${video.id}`}>
-                    <VideoCard 
-                      key={video.id}
-                      id={video.id}
-                      title={video.title}
-                      thumbnail={video.thumbnail}
-                      duration={video.duration}
-                      views={video.views}
-                      likes={video.likes}
-                      channel={video.channelName}
-                      channelAvatar={video.channelAvatar}
-                      category={video.category}
-                    />
-                  </Link>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+              {results.map(video => (
+                <VideoCard key={video.id} {...video} />
               ))}
             </div>
           )}
